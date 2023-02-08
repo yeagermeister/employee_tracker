@@ -5,7 +5,7 @@ const helpers = require('./src/helper')
 
 function mainMenu() {
     inquirer
-        .createPromptModule([
+        .prompt([
             {type: 'list',
             message: 'What would you like to do?',
             name: 'choice',
@@ -16,12 +16,11 @@ function mainMenu() {
                     {name: 'Add a department', value: 'addDep'},
                     {name: 'Add a role', value: 'addRole'},
                     {name: 'Add an employee', value: 'addEmployee'},
-                    {name: 'Update an employee', value: 'upEmployee'},
+                    {name: 'Update an employee', value: 'upEmployee'}
                 ]
             }
         ])
-
-        .then(answers =>{
+        .then((answers) => {
             if(answers.choice === 'viewDep') {
                 getDepartments();
             };

@@ -1,9 +1,14 @@
 
-const departments = 
 
+class Employees {
+  constructor(manager, department) {
+    this.manager = manager;
+    this.department = department;
+   }
 
-module.exports = {
-    departments,
-    roles,
-    emlpoyees
-  };
+   getDepartments() {
+    if (this.manager) {
+      db.query
+    }
+   }
+  }
