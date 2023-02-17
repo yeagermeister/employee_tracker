@@ -1,38 +1,32 @@
-const express = require('express');
-const mysql = require('mysql2');
+// const mysql = require('mysql2');
+// // const bluebird = require('bluebird');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
+// // Connect to database
+// const db = mysql.createConnection(
+//   {
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'password',
+//     database: 'employees_db',
+//   },
+//   console.log(`Connected to the employees_db database.`)
+// );
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
-// Connect to database
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'employees_db'
-  },
-  console.log(`Connected to the employees_db database.`)
-);
-
-// Query database
-// db.query('SELECT * FROM students', function (err, results) {
-//   console.log(results);
+// // Query database
+// db.query('SELECT * FROM employee', function (err,results) {
+//   console.log(results)
 // });
+//   // .then(([rows, fields]) => {
+//     // console.log(rows);
+//   //   // console.log(fields);
+//   //   console.log(employee)
+//   // })
+//   // // .catch(console.log)
+//   // .then(() => db.end());
 
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
+//   // console.log(employee)
+  
+  
+// // Default response for any other request (Not Found)
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-// DO i need lines 28-34
-
-// Start the prompts
 

@@ -4,9 +4,7 @@ class Mysql {
     constructor(dbname) {
         this.establishedConnection = null;
         this.dbname = dbname;
-        this.dbuser = 'root';
         this.password = 'password';
-        this
     }
 
     connection() {
@@ -45,6 +43,12 @@ class Mysql {
             this.establishedConnection = null;
         }
     }
+
+    // getDepartments() {
+    //     this.establishedConnection.query('SELECT * FROM dpartment', function (err, results) {
+    //     console,log(results);
+    //     })
+    // }
 }
 
 module.exports = Mysql;
