@@ -2,7 +2,6 @@ const cTable = require('console.table');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -78,6 +77,8 @@ function getDepartments() {
         } else {
             console.clear();
             console.table(results);
+            myDepartments = results;
+            console.table(myDepartments);
             clearConsole()
         };
     });
@@ -126,17 +127,25 @@ function addDepartment() {
 };
 
 function addRole() {
+    getDepartments();
+    console.log(myDepartments);
     inquirer
         .prompt([
             {type: 'input',
             message: 'Please enter the name of the role.',
             name: 'role'
+            },
+            {type: 'input',
+            message: 'Please enter the salary for this role.',
+            name: 'salary'
             }
+
         ])
         .then(answers => {
-            db.query('INSERT INTO role (name) VALUES (?)', [answers.role], function (err, results) {
+            db.query('INSERT INTO role (name, salary, dept) VALUES (?)', [answers.role], function (err, results) {
                 console.clear();
                 getRoles();
+                
             })
         });
 };
@@ -146,11 +155,11 @@ function addEmployee() {
         .prompt([
             {type: 'input',
             message: 'Please enter the first name of the employee.',
-            name: 'role'
+            name: 'employee'
             }
         ])
         .then(answers => {
-            db.query('INSERT INTO department (first_name) VALUES (?)', [answers.role], function (err, results) {
+            db.query('INSERT INTO department (first_name) VALUES (?)', [answers.employee], function (err, results) {
                 console.clear();
                 getRoles();
             })

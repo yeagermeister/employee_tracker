@@ -1,54 +1,43 @@
 const mysql = require('mysql2');
 
-class Mysql {
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      user: 'root',
+      password: 'password',
+      database: 'employees_db'
+    }
+);
+
+class Sql {
     constructor(dbname) {
-        this.establishedConnection = null;
+        this.host = '127.0.0.1';
         this.dbname = dbname;
-        this.password = 'password';
+        this.password = 'password'
+        this.user = 'root';
     }
 
-    connection() {
-        return new Promise((resolve, reject) => {
-            resolve(mysql.createConnection({
-                host: "127.0.0.1",
-                user: "root",
-                password: this.dbpassword,
-                database: this.dbname
-            }))
-        })
-    }
-    
-    connect() {
-        if (!this.establishedConnection) {
-            this.establishedConnection = this.connection().then(res => {
-                res.connect(function(err) {
-                    if (err) {
-                        this.dropConnection();
-                        throw err;
-                    }
-              
-                console.log(res.state, "connected")
-                })
-            });
-        }
-    }
-    
-    dropConnection() {
-        if (this.establishedConnection) {
-            this.establishedConnection.then(res => {
-                res.end();
-                console.log(res.state, 'connection dropped');
-            });
-          
-            this.establishedConnection = null;
-        }
-    }
+    getDepartments() {
+        db.promise().query('SELECT * FROM department')
+            .then(([rows,fields]) => {
+                console.log(rows);
+                return rows;
+            })
+            .catch(console.log)
+            .then(() => db.end())
 
-    // getDepartments() {
-    //     this.establishedConnection.query('SELECT * FROM dpartment', function (err, results) {
-    //     console,log(results);
-    //     })
-    // }
-}
+        
+        
+        // function (err, results) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         console.log("class", results);
+        //         return results}
+        // });
+    };
 
-module.exports = Mysql;
+
+};
+
+module.exports = Sql;
