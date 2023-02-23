@@ -2,6 +2,14 @@ const cTable = require('console.table');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+// sql queries
+const sqlEmployees = "SELECT employee.id AS eid, first_name AS firstName, last_name AS lastName, role.title AS title, department.name AS department, role.salary AS salary, manager_id AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id;";
+const sqlRoles = "select * from role;";
+const sqlDepartments = "SELECT * FROM department";
+const insDept = "INSERT INTO department (name) VALUES (?)"
+
+
+// Create the connection to the database
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -12,8 +20,30 @@ const db = mysql.createConnection(
     console.log(`Connected to the employees_db database.`)
   );
 
+// ******************************************************************
+// ************* Sql Queries and Display ****************************
+//******************************************************************* 
+
+// Function to hande select queries
+  function getData(queryString) {
+    db.query(queryString, function (err, results) {
+        if (err) {
+            console.log(err);
+            return mainMenu();
+        } else {
+            console.clear();
+            console.table(results);
+            clearConsole()
+        };
+    });
+};
 
 
+// ******************************************************************
+// ********** Inquirer Functions section ****************************
+//******************************************************************* 
+
+// Generate the main menu
 function mainMenu() {
     inquirer
         .prompt([
@@ -27,35 +57,40 @@ function mainMenu() {
                     {name: 'Add a department', value: 'addDep'},
                     {name: 'Add a role', value: 'addRole'},
                     {name: 'Add an employee', value: 'addEmployee'},
-                    {name: 'Update an employee', value: 'upEmployee'}
+                    {name: 'Update an employee', value: 'upEmployee'},
+                    {name: 'End the program', value: 'stop'}
                 ]
             }
         ])
         .then((answers) => {
-            if(answers.choice === 'viewDep') {
-                getDepartments();
-            };
-            if(answers.choice === 'viewRoles') {
-                getRoles();
-            };
-            if(answers.choice === 'viewEmp') {
-                getEmployees();
-            };
-            if(answers.choice === 'addDep') {
-                addDepartment();
-            };
-            if(answers.choice === 'addRole') {
-                addRole();
-            };
-            if(answers.choice === 'addEmployee') {
-                addEmployee();
-            };
-            if(answers.choice === 'upEmployee') {
-                updateEmployee();
-            };
+            switch (answers.choice) {
+                case 'viewDep':
+                    getData(sqlDepartments);
+                case 'viewEmp':
+                    getData(sqlEmployees);   
+                case 'viewRoles':
+                    getData(sqlRoles); 
+                case 'addDep':
+                    addDepartment();       
+                case 'addRole':
+                    addRole();   
+                case 'addEmployee':
+                    addEmployee;      
+                case 'upEmployee':
+                    updateEmployee();
+                case 'stop':
+                    endSession();
+            }
         })
 };
 
+
+
+// ******************************************************************
+// ******************** Helper Functions ****************************
+//******************************************************************* 
+
+// Prompts the user to continue and clears the console
 function clearConsole() {
     inquirer
         .prompt([
@@ -69,45 +104,9 @@ function clearConsole() {
         })
 };
 
-function getDepartments() {
-    db.query('SELECT * FROM department', function (err, results) {
-        if (err) {
-            console.log(err);
-            return mainMenu();
-        } else {
-            console.clear();
-            console.table(results);
-            myDepartments = results;
-            console.table(myDepartments);
-            clearConsole()
-        };
-    });
-};
-
-function getRoles() {
-    db.query('SELECT * FROM role', function (err, results) {
-        if (err) {
-            console.log(err);
-            return mainMenu();
-        } else {
-            console.clear();
-            console.table(results);
-            clearConsole()
-        };
-    });
-};
-
-function getEmployees() {
-    db.query('SELECT * FROM employee', function (err, results) {
-        if (err) {
-            console.log(err);
-            return mainMenu();
-        } else {
-            console.clear();
-            console.table(results);
-            clearConsole()
-        };
-    });
+// I could find no way to gracefully shut this program down from within inquirer so using this.
+function endSession() {
+   throw "Thank you for using the employee tracker";
 };
 
 function addDepartment() {
@@ -119,7 +118,7 @@ function addDepartment() {
             }
         ])
         .then(answers => {
-            db.query('INSERT INTO department (name) VALUES (?)', [answers.department], function (err, results) {
+            db.query(insDept, [answers.department], function (err, results) {
                 console.clear();
                 getDepartments();
             })
@@ -166,7 +165,7 @@ function addEmployee() {
         });
 };
 
-function upEmployee() {
+function updateEmployee() {
     db.query('SELECT * FROM employee', function (err, results) {
     console.log(results);
     })

@@ -19,5 +19,5 @@ VALUES
 ("Seinfeld", "Jerry", 1, 5),
 ("Benes", "Elaine", 2, 5),
 ("Kramer", "Cosmo", 3, 5),
-("Costanza", "George", 4, 3),
+("Costanza", "George", 4, 5),
 ("Yeager", "John", 5, NULL); -- NULL because they can't be their own manage
