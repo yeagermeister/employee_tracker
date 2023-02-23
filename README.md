@@ -21,7 +21,7 @@ Table of Contents
 
 ## Usage
 The app can be started at a terminal prompt by typing "node index.js"
-A video of the app in action can be found [here.](./dist/index.html)
+A video of the app in action can be found [here.](https://drive.google.com/file/d/15n32ffiasV-DbrhZNfjQisT_lXyw8wwX/view)
 
 ## Contribution Guidelines
 na
