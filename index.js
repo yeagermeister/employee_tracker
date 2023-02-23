@@ -10,7 +10,6 @@ const insDept = "INSERT INTO department (name) VALUES (?)";
 const insRole = "INSERT INTO role (title, salary, department_id) VALUES (?)";
 const insEmp = "INSERT INTO employee (last_name, first_name, role_id, manager_id) VALUES (?)";
 
-
 // Create the connection to the database
 const db = mysql.createConnection(
     {
@@ -25,7 +24,7 @@ const db = mysql.createConnection(
 // ************* Sql Queries and Display ****************************
 //******************************************************************* 
 
-// Function to hande select queries
+// Function to hande generic select queries
 function getData(queryString) {
     db.query(queryString, function (err, results) {
         if (err) {
@@ -78,6 +77,8 @@ function mainMenu() {
                     {name: 'Add a role', value: 'addRole'},
                     {name: 'Add an employee', value: 'addEmployee'},
                     {name: 'Change an employees role', value: 'upEmployee'},
+                    {name: "Update an employee's manager", value:'upManager'},
+                    {name: "View employees by manager", value:'viewEmpMgr'},
                     {name: 'End the program', value: 'stop'}
                 ]
             }
@@ -103,6 +104,12 @@ function mainMenu() {
             };      
             if (answers.choice === 'upEmployee') {
                 updateEmployee();
+            };  
+            if (answers.choice === 'upManager') {
+                updateManager();
+            };
+            if (answers.choice === 'viewEmpMgr') {
+                viewEmpMgr();
             };  
             if (answers.choice === 'stop') {
                 console.clear;
@@ -204,6 +211,7 @@ const addEmployee = async () => {
     })
 };
 
+// function to update and employee's role
 const updateEmployee = async () => {
     return inquirer.prompt([
         {type: 'list',
@@ -213,7 +221,7 @@ const updateEmployee = async () => {
         },
         {type: 'list',
         name: 'role',
-        message: 'What is the employees new role?',
+        message: "What is the employee's new role?",
         choices: await selectRole()
         }
     ])
@@ -222,6 +230,52 @@ const updateEmployee = async () => {
         db.query(upEmp);
         console.clear();
         getData(sqlEmployees);
+    })
+};
+
+// function to update an employee's manager
+const updateManager = async () => {
+    return inquirer.prompt([
+        {type: 'list',
+        name: 'employee',
+        message: "Which employee's would you like to have report to a new manager?",
+        choices: await selectEmployee()
+        },
+        {type: 'list',
+        name: 'manager',
+        message: 'Who is the employees new manager?',
+        choices: await selectEmployee()
+        }
+    ])
+    .then(function(answers) {
+        let upMgr = `UPDATE employee SET manager_id = ${answers.manager} WHERE id = ${answers.employee}`;
+        db.query(upMgr);
+        console.clear();
+        getData(sqlEmployees);
+    })
+};
+
+// function to view employee's by manager
+const viewEmpMgr = async () => {
+    return inquirer.prompt([
+        {type: 'list',
+        name: 'manager',
+        message: 'Select a Manager to see thier direct reports?',
+        choices: await selectEmployee()
+        }
+    ])
+    .then(function(answers) {
+        let getEmps = `SELECT employee.id AS eid, first_name AS firstName, last_name AS lastName, role.title AS title, department.name AS department, role.salary AS salary, manager_id AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id where employee.manager_id = ${answers.manager};`;
+        db.query(getEmps, function (err, results) {
+            if (err) {
+                console.log(err);
+                return mainMenu();
+            } else {
+                console.clear();
+                console.table(results);
+                clearConsole()
+            };
+        })
     })
 };
 
